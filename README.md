@@ -17,7 +17,7 @@ document database คือ database ที่เก็บข้อมูลใ�
 
 ตัวอย่าง document ที่เก็บใน MongoDB
 
-```json
+```javascript
 {
 	title: "Post Title 1",
 	body: "Body of post.",
