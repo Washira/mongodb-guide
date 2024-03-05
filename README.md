@@ -10,6 +10,11 @@
   - [`mongosh` Create Database](#mongosh-create-database)
     - [Show all databases](#show-all-databases)
     - [Change or Create a Database](#change-or-create-a-database)
+  - [`mongosh` Create Collection](#mongosh-create-collection)
+  - [`mongosh` Insert](#mongosh-insert)
+  - [`mongosh` Find](#mongosh-find)
+    - [`find()`](#find)
+    - [`findOne()`](#findone)
 
 
 ## Introduction
@@ -99,4 +104,86 @@ show dbs
 
 ```bash
 use blog
+```
+
+## `mongosh` Create Collection
+
+มี 2 วิธี
+
+1. ใช้คำสั่ง `db.createCollection('<collection>')`
+   
+```bash
+db.createCollection('posts')
+```
+
+2. สามารถสร้าง collection ในระหว่างการ insert document โดยใช้คำสั่ง `db.<collection>.insertOne()`
+   
+```bash
+db.posts.insertOne({"title": "Post 1"})
+```
+
+Remember: ถ้า collection ไม่มี document ใด ๆ อยู่ มันจะไม่แสดงออกมาใน `show collections` หรือ `db.getCollectionNames()` จนกว่าจะมี document อยู่ใน collection นั้น ๆ
+
+## `mongosh` Insert
+
+ใช้คำสั่ง `db.<collection>.insertOne()` เพื่อ insert document ใน collection
+
+```bash
+db.posts.insertOne({
+  title: "Post 1",
+  body: "Body of post 1",
+  category: "News",
+  likes: 1,
+  tags: ["news", "events"],
+  date: Date()
+})
+```
+
+หรือใช้คำสั่ง `db.<collection>.insertMany()` เพื่อ insert หลาย document ใน collection
+
+```bash
+db.posts.insertMany([
+  {
+    title: "Post 2",
+    body: "Body of post 2",
+    category: "News",
+    likes: 2,
+    tags: ["news", "events"],
+    date: Date()
+  },
+  {
+    title: "Post 3",
+    body: "Body of post 3",
+    category: "News",
+    likes: 3,
+    tags: ["news", "events"],
+    date: Date()
+  }
+])
+```
+
+## `mongosh` Find
+
+มี 2 วิธีในการค้นหาข้อมูลใน MongoDB คือ `find()` และ `findOne()`
+
+### `find()`
+
+ใช้คำสั่ง `db.<collection>.find()` เพื่อค้นหา document ใน collection
+
+```bash
+db.posts.find()
+```
+
+หรือใช้คำสั่ง `db.<collection>.find().pretty()` เพื่อแสดงข้อมูลในรูปแบบที่สวยงาม
+
+```bash
+db.posts.find().pretty()
+```
+
+### `findOne()`
+
+ใช้คำสั่ง `db.<collection>.findOne()` เพื่อค้นหา document แรกที่เจอใน collection
+
+```bash
+db.posts.findOne()
 ```
