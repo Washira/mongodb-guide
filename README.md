@@ -19,6 +19,13 @@
     - [Querying Data](#querying-data)
     - [Projection](#projection)
       - [Error Case](#error-case)
+  - [`mongosh` Update](#mongosh-update)
+    - [`updateOne()`](#updateone)
+    - [Insert if not found](#insert-if-not-found)
+    - [`updateMany()`](#updatemany)
+  - [`mongosh` Delete](#mongosh-delete)
+    - [`deleteOne()`](#deleteone)
+    - [`deleteMany()`](#deletemany)
 
 
 ## Introduction
@@ -333,4 +340,148 @@ db.posts.find({}, {title: 1, date: 0})
 
 ```bash
 MongoServerError: Cannot do exclusion on field date in inclusion projection
+```
+
+## `mongosh` Update
+
+การอัพเดท document ใน MongoDB มี 2 วิธี คือ `updateOne()` และ `updateMany()`
+
+parameter ของ `updateOne()` และ `updateMany()` ตัวแรก คือ query ที่ต้องการอัพเดท และตัวที่สอง คือ document ที่ต้องการอัพเดท
+
+### `updateOne()`
+
+ใช้คำสั่ง `db.<collection>.updateOne()` เพื่อ update document แรกที่เจอใน collection (คล้ายกับ `findOne()`)
+
+ตัวอย่างเช่น ถ้าต้องการอัพเดท document ที่มี field `title` เป็น `Post Title 1` และ อัพเดท field `likes` ของ document นั้น ใช้คำสั่ง
+
+```bash
+db.posts.updateOne({ title: "Post Title 1" }, { $set: { likes: 2 } })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedId: null
+}
+```
+
+check document ที่อัพเดท
+
+```bash
+db.posts.find({ title: "Post Title 1" })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  {
+    _id: ObjectId("62c350dc07d768a33fdfe9b0"),
+    title: 'Post Title 1',
+    body: 'Body of post.',
+    category: 'News',
+    likes: 2,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Jul 04 2022 15:43:08 GMT-0500 (Central Daylight Time)'
+  }
+]
+```
+
+### Insert if not found
+
+ถ้า document ที่ต้องการอัพเดทไม่มีอยู่ ให้เพิ่ม parameter `upsert: true` ในการอัพเดท
+
+เช่น
+
+```bash
+db.posts.updateOne( 
+  { title: "Post Title 5" }, 
+  {
+    $set:
+      {
+        title: "Post Title 5",
+        body: "Body of post.",
+        category: "Event",
+        likes: 5,
+        tags: ["news", "events"],
+        date: Date()
+      }
+  },
+  { upsert: true }
+)
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+{
+  acknowledged: true,
+  insertedId: ObjectId("62c358734684a30f296cfe5f"),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+```
+
+### `updateMany()`
+
+ใช้คำสั่ง `db.<collection>.updateMany()` เพื่อ update document ทั้งหมดที่เจอใน collection
+
+ตัวอย่างเช่น ต้องการอัพเดท field `likes` ของ document ทั้งหมดให้เป็น  `1` เราจะใช้ operator `inc`
+
+```bash
+db.posts.updateMany({}, { $inc: { likes: 1 } })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 5,
+  modifiedCount: 5,
+  upsertedCount: 0
+}
+```
+
+## `mongosh` Delete
+
+การลบ document ใน MongoDB มี 2 วิธี คือ `deleteOne()` และ `deleteMany()`
+
+### `deleteOne()`
+
+ใช้คำสั่ง `db.<collection>.deleteOne()` เพื่อลบ document แรกที่เจอใน collection (คล้ายกับ `findOne()`)
+
+ตัวอย่างเช่น ถ้าต้องการลบ document ที่มี field `title` เป็น `Post Title 5` ใช้คำสั่ง
+
+```bash
+db.posts.deleteOne({ title: "Post Title 5" })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+{ acknowledged: true, deletedCount: 1 }
+```
+
+### `deleteMany()`
+
+ใช้คำสั่ง `db.<collection>.deleteMany()` เพื่อลบ document ทั้งหมดที่เจอใน collection
+
+ตัวอย่างเช่น ถ้าต้องการลบ document ที่มี field `category` เป็น `Technology` ใช้คำสั่ง
+
+```bash
+db.posts.deleteMany({ category: "Technology" })  
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+{ acknowledged: true, deletedCount: 1 }
 ```
