@@ -13,8 +13,12 @@
   - [`mongosh` Create Collection](#mongosh-create-collection)
   - [`mongosh` Insert](#mongosh-insert)
   - [`mongosh` Find](#mongosh-find)
-    - [`find()`](#find)
-    - [`findOne()`](#findone)
+    - [Find Data](#find-data)
+      - [`find()`](#find)
+      - [`findOne()`](#findone)
+    - [Querying Data](#querying-data)
+    - [Projection](#projection)
+      - [Error Case](#error-case)
 
 
 ## Introduction
@@ -164,9 +168,11 @@ db.posts.insertMany([
 
 ## `mongosh` Find
 
+### Find Data
+
 มี 2 วิธีในการค้นหาข้อมูลใน MongoDB คือ `find()` และ `findOne()`
 
-### `find()`
+#### `find()`
 
 ใช้คำสั่ง `db.<collection>.find()` เพื่อค้นหา document ใน collection
 
@@ -180,10 +186,151 @@ db.posts.find()
 db.posts.find().pretty()
 ```
 
-### `findOne()`
+#### `findOne()`
 
 ใช้คำสั่ง `db.<collection>.findOne()` เพื่อค้นหา document แรกที่เจอใน collection
 
 ```bash
 db.posts.findOne()
+```
+
+### Querying Data
+
+ใช้คำสั่ง `db.<collection>.find()` และใส่เงื่อนไขเพื่อค้นหาข้อมูลที่ต้องการ
+
+```bash
+db.posts.find({ title: "Post 1" })
+```
+
+หรือใช้คำสั่ง `db.<collection>.find()` และใส่เงื่อนไขเพื่อค้นหาข้อมูลที่ต้องการ และใช้ projection เพื่อเลือกเฉพาะ field ที่ต้องการ
+
+```bash
+db.posts.find({ title: "Post 1" }, { title: 1, _id: 0 })
+```
+
+### Projection
+
+ใช้ projection เพื่อเลือกเฉพาะ field ที่ต้องการ อย่างเช่น ถ้าต้องการเลือกเฉพาะ field `title` และ `date` ใช้คำสั่ง
+
+```bash
+db.posts.find({}, { title: 1, date: 1 })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  {
+    _id: ObjectId("62c350dc07d768a33fdfe9b0"),
+    title: 'Post Title 1',
+    date: 'Mon Jul 04 2022 15:43:08 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    _id: ObjectId("62c3513907d768a33fdfe9b1"),
+    title: 'Post Title 2',
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    _id: ObjectId("62c3513907d768a33fdfe9b2"),
+    title: 'Post Title 3',
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    _id: ObjectId("62c3513907d768a33fdfe9b3"),
+    title: 'Post Title 4',
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  }
+]
+```
+
+สังเกตว่า field `_id` จะแสดงออกมาเสมอ ถึงแม้ว่าไม่ได้ระบุ
+
+เราสามารถใช้ `1` เพื่อแสดง field ที่ต้องการ และ `0` เพื่อไม่แสดง field ที่ไม่ต้องการ
+
+```bash
+db.posts.find({}, { _id: 0, title: 1, date: 1 })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  {
+    title: 'Post Title 1',
+    date: 'Mon Jul 04 2022 15:43:08 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    title: 'Post Title 2',
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    title: 'Post Title 3',
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    title: 'Post Title 4',
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  }
+]
+```
+
+#### Error Case
+
+เราไม่สามารถใช้ `0` และ `1` ในการเลือก field ในคราวเดียวกัน ในการเลือก field ให้ใช้ `1` เท่านั้น
+
+ยกตัวอย่างเช่น ถ้าไม่ต้องการเลือก field `category` ใช้คำสั่ง
+
+```bash
+db.posts.find({}, { category: 0 })
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  {
+    _id: ObjectId("62c350dc07d768a33fdfe9b0"),
+    title: 'Post Title 1',
+    body: 'Body of post.',
+    likes: 1,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Jul 04 2022 15:43:08 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    _id: ObjectId("62c3513907d768a33fdfe9b1"),
+    title: 'Post Title 2',
+    body: 'Body of post.',
+    likes: 2,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    _id: ObjectId("62c3513907d768a33fdfe9b2"),
+    title: 'Post Title 3',
+    body: 'Body of post.',
+    likes: 3,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  },
+  {
+    _id: ObjectId("62c3513907d768a33fdfe9b3"),
+    title: 'Post Title 4',
+    body: 'Body of post.',
+    likes: 4,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Jul 04 2022 15:44:41 GMT-0500 (Central Daylight Time)'
+  }
+]
+```
+
+เราจะได้ error ทันทีถ้า ใช้ `1` และ `0` ในการเลือก field ในคราวเดียวกัน
+
+```bash
+db.posts.find({}, {title: 1, date: 0})
+```
+
+จะได้ error แบบนี้
+
+```bash
+MongoServerError: Cannot do exclusion on field date in inclusion projection
 ```
