@@ -7,6 +7,9 @@
     - [Install MongoDB Shell (mongosh)](#install-mongodb-shell-mongosh)
     - [Connect to the database](#connect-to-the-database)
   - [Query API](#query-api)
+  - [`mongosh` Create Database](#mongosh-create-database)
+    - [Show all databases](#show-all-databases)
+    - [Change or Create a Database](#change-or-create-a-database)
 
 
 ## Introduction
@@ -75,3 +78,25 @@ Query API ใน MongoDB คือการใช้คำสั่งเพื�
 - Full-text search
 - index ข้อมูลเพื่อเพิ่มประสิทธิภาพในการ query
 - Time-series analysis
+
+## `mongosh` Create Database
+
+เมื่อ connect ครั้งแรก เราจะเห็น database ที่มีชื่อว่า `myFirstDatabase`
+
+### Show all databases
+
+ใช้คำสั่ง
+
+```bash
+show dbs
+```
+
+เราจะเห็นว่า ไม่มี `myFirstDatabase` แสดงออกมา เพราะว่า `myFirstDatabase` ไม่มี collection ใด ๆ ที่ถูกสร้างไว้
+
+### Change or Create a Database
+
+อย่างเช่น ถ้าต้องการสร้าง database ชื่อว่า `blog` ใช้คำสั่ง
+
+```bash
+use blog
+```
