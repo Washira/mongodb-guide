@@ -35,6 +35,9 @@
     - [Array](#array)
   - [Aggregation Pipelines](#aggregation-pipelines)
     - [Aggregation `$group`](#aggregation-group)
+    - [Aggregation `$limit`](#aggregation-limit)
+    - [Aggregation `$project`](#aggregation-project)
+    - [Aggregation `$sort`](#aggregation-sort)
 
 
 ## Introduction
@@ -600,14 +603,15 @@ db.posts.aggregate([
 [ { _id: 'News', totalLikes: 3 }, { _id: 'Event', totalLikes: 8 } ]
 ```
 
+ตัวอย่างในบทเรียน เราจะใช้ dataset จาก [MongoDB Sample Dataset](https://docs.atlas.mongodb.com/sample-data/)
+
 ### Aggregation `$group`
 
 ใช้ `$group` เพื่อ group ข้อมูล และทำการคำนวณข้อมูล โดย `_id` expression
 
 อย่าสับสนกับ `_id` ของ document ที่เก็บใน collection ที่เราสร้างขึ้นมา ในการใช้ `$group` ให้ใช้ `_id` expression ที่ต้องการ
 
-ตัวอย่างการใช้ เราจะใช้ dataset จาก [MongoDB Sample Dataset](https://docs.atlas.mongodb.com/sample-data/)
-โดยเลือกใช้ database `sample_airbnb` collection `listingsAndReviews` และใช้คำสั่ง
+ในตัวอย่าง เลือกใช้ database `sample_airbnb` collection `listingsAndReviews` และใช้คำสั่ง
   
 ```bash
 db.listingsAndReviews.aggregate(
@@ -642,3 +646,131 @@ db.listingsAndReviews.aggregate(
 ]
 ```
 
+### Aggregation `$limit`
+
+ใช้ `$limit` เพื่อจำกัดจำนวน document ที่ต้องการ เพื่อส่งเป็น output ไปยัง `stage` ถัดๆ ไป
+
+ในตัวอย่าง เลือกใช้ database `sample_mflix` collection `movies` และใช้คำสั่ง
+
+```bash
+db.movies.aggregate([ { $limit: 1 } ])
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  {
+    _id: ObjectId("573a1390f29313caabcd4135"),
+    plot: 'Three men hammer on an anvil and pass a bottle of beer around.',
+    genres: [ 'Short' ],
+    runtime: 1,
+    cast: [ 'Charles Kayser', 'John Ott' ],
+    num_mflix_comments: 0,
+    title: 'Blacksmith Scene',
+    fullplot: 'A stationary camera looks at a large anvil with a blacksmith behind it and one on either side. The smith in the middle draws a heated metal rod from the fire, places it on the anvil, and all three begin a rhythmic hammering. After several blows, the metal goes back in the fire. One smith pulls out a bottle of beer, and they each take a swig. Then, out comes the glowing metal and the hammering resumes.',
+    countries: [ 'USA' ],
+    released: ISODate("1893-05-09T00:00:00.000Z"),
+    directors: [ 'William K.L. Dickson' ],
+    rated: 'UNRATED',
+    awards: { wins: 1, nominations: 0, text: '1 win.' },
+    lastupdated: '2015-08-26 00:03:50.133000000',
+    year: 1893,
+    imdb: { rating: 6.2, votes: 1189, id: 5 },
+    type: 'movie',
+    tomatoes: {
+      viewer: { rating: 3, numReviews: 184, meter: 32 },
+      lastUpdated: ISODate("2015-06-28T18:34:09.000Z")
+    }
+  }
+]
+```
+
+จากตัวอย่าง เราจะเห็นว่ามีเพียง document เดียวที่ได้จาก output
+
+### Aggregation `$project`
+
+ใช้ `$project` เพื่อเลือก field ที่ต้องการ และเปลี่ยนชื่อ field ที่ต้องการ
+
+ในตัวอย่าง เลือกใช้ database `sample_restaurants` collection `restaurants` และใช้คำสั่ง
+
+```bash
+db.restaurants.aggregate([
+  {
+    $project: {
+      "name": 1,
+      "cuisine": 1,
+      "address": 1
+    }
+  },
+  {
+    $limit: 5
+  }
+])
+```
+
+จะได้ผลลัพธ์เป็น
+  
+```bash
+[
+  {
+    _id: ObjectId("5eb3d668b31de5d588f4292a"),
+    address: {
+      building: '2780',
+      coord: [ -73.98241999999999, 40.579505 ],
+      street: 'Stillwell Avenue',
+      zipcode: '11224'
+    },
+    cuisine: 'American',
+    name: 'Riviera Caterer'
+  },
+  {
+    _id: ObjectId("5eb3d668b31de5d588f4292b"),
+    address: {
+      building: '7114',
+      coord: [ -73.9068506, 40.6199034 ],
+      street: 'Avenue U',
+      zipcode: '11234'
+    },
+    cuisine: 'Delicatessen',
+    name: "Wilken'S Fine Food"
+  },
+  {
+    _id: ObjectId("5eb3d668b31de5d588f4292c"),
+    address: {
+      building: '2206',
+      coord: [ -74.1377286, 40.6119572 ],
+      street: 'Victory Boulevard',
+      zipcode: '10314'
+    },
+    cuisine: 'Jewish/Kosher',
+    name: 'Kosher Island'
+  },
+  {
+    _id: ObjectId("5eb3d668b31de5d588f4292d"),
+    address: {
+      building: '469',
+      coord: [ -73.961704, 40.662942 ],
+      street: 'Flatbush Avenue',
+      zipcode: '11225'
+    },
+    cuisine: 'Hamburgers',
+    name: "Wendy'S"
+  },
+  {
+    _id: ObjectId("5eb3d668b31de5d588f4292e"),
+    address: {
+      building: '1007',
+      coord: [ -73.856077, 40.848447 ],
+      street: 'Morris Park Ave',
+      zipcode: '10462'
+    },
+    cuisine: 'Bakery',
+    name: 'Morris Park Bake Shop'
+  }
+]
+```
+
+
+
+### Aggregation `$sort`
