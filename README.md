@@ -26,6 +26,15 @@
   - [`mongosh` Delete](#mongosh-delete)
     - [`deleteOne()`](#deleteone)
     - [`deleteMany()`](#deletemany)
+  - [Query Operators](#query-operators)
+    - [Comparison](#comparison)
+    - [Logical](#logical)
+    - [Evaluation](#evaluation)
+  - [Update Operators](#update-operators)
+    - [Fields](#fields)
+    - [Array](#array)
+  - [Aggregation Pipelines](#aggregation-pipelines)
+    - [Aggregation `$group`](#aggregation-group)
 
 
 ## Introduction
@@ -485,3 +494,115 @@ db.posts.deleteMany({ category: "Technology" })
 ```bash
 { acknowledged: true, deletedCount: 1 }
 ```
+
+## Query Operators
+
+ในการ query ข้อมูลใน MongoDB มี `query operators` ที่สามารถใช้เพื่อ query ข้อมูลได้
+
+### Comparison
+
+ใช้ `comparison operators` เพื่อ query ข้อมูลเอามาเปรียบเทียบ
+
+- `$eq` เท่ากับ
+- `$ne` ไม่เท่ากับ
+- `$gt` มากกว่า
+- `$gte` มากกว่าหรือเท่ากับ
+- `$lt` น้อยกว่า
+- `$lte` น้อยกว่าหรือเท่ากับ
+- `$in` อยู่ใน array
+
+### Logical
+
+ใช้ `logical operators` เพื่อ query ข้อมูลเอามาเปรียบเทียบทาง logic กับ query อื่น ๆ
+
+- `$and` และ
+- `$or` หรือ
+- `$nor` ไม่ใช่หรือ
+- `$not` ไม่ใช่
+
+### Evaluation
+
+ใช้ `evaluation operators` เพื่อ query ข้อมูลเอามาเปรียบเทียบทางการประเมินค่า
+
+- `$regex` ใช้ regular expression
+- `$exists` ตรวจสอบว่า field นั้น ๆ มีอยู่หรือไม่
+- `$type` ตรวจสอบ type ของ field
+- `$mod` ตรวจสอบเงื่อนไขที่เป็นเลข
+- `$text` ใช้ text search
+- `$where` ใช้ JavaScript expression
+- `$jsonSchema` ใช้ JSON schema
+- `$geoIntersects` ใช้ geospatial queries
+- `$geoWithin` ใช้ geospatial queries
+- `$near` ใช้ geospatial queries
+- `$nearSphere` ใช้ geospatial queries
+- `$all` ตรวจสอบว่า array นั้น ๆ มีทุกค่าหรือไม่
+- `$elemMatch` ตรวจสอบว่า array นั้น ๆ มีค่าที่ตรงกับเงื่อนไขหรือไม่
+- `$size` ตรวจสอบขนาดของ array
+- `$bitsAllClear` ตรวจสอบว่า bit ทั้งหมดใน field นั้น ๆ มีค่าเป็น 0 หรือไม่
+- `$bitsAllSet` ตรวจสอบว่า bit ทั้งหมดใน field นั้น ๆ มีค่าเป็น 1 หรือไม่
+- `$bitsAnyClear` ตรวจสอบว่า bit ใด ๆ ใน field นั้น ๆ มีค่าเป็น 0 หรือไม่
+- `$bitsAnySet` ตรวจสอบว่า bit ใด ๆ ใน field นั้น ๆ มีค่าเป็น 1 หรือไม่
+- `$comment` ใช้ comment ใน query
+- `$meta` ใช้ metadata ใน text search
+- `$slice` ใช้ projection ใน array
+- `$elemMatch` ใช้ query ใน array
+- `$bitsAllClear` ใช้ bit ใน query
+- `$bitsAllSet` ใช้ bit ใน query
+- `$bitsAnyClear` ใช้ bit ใน query
+- `$bitsAnySet` ใช้ bit ใน query
+
+## Update Operators
+
+ในการ update ข้อมูลใน MongoDB มี `update operators` ที่สามารถใช้เพื่อ update ข้อมูลได้
+
+### Fields
+
+ใช้ `fields operators` เพื่อ update ข้อมูลใน field ของ document
+
+- `$set` ใช้เพื่อ set ค่าใหม่ใน field ของ document
+- `$unset` ใช้เพื่อลบ field ของ document
+- `$rename` ใช้เพื่อเปลี่ยนชื่อ field ของ document
+- `$inc` ใช้เพื่อเพิ่มค่าของ field ของ document
+- `$mul` ใช้เพื่อคูณค่าของ field ของ document
+- `$min` ใช้เพื่อเปรียบเทียบค่าของ field ของ document และเลือกค่าที่น้อยที่สุด
+- `$max` ใช้เพื่อเปรียบเทียบค่าของ field ของ document และเลือกค่าที่มากที่สุด
+- `$currentDate` ใช้เพื่อ set ค่าของ field ให้เป็น current date หรือ current timestamp
+
+### Array
+
+ใช้ `array operators` เพื่อ update ข้อมูลใน array ของ document
+
+- `$addToSet` ใช้เพื่อเพิ่มค่าใหม่ใน array ของ field ของ document และไม่เพิ่มค่าซ้ำ
+- `$pop` ใช้เพื่อลบค่าของ field ของ document ที่เป็น array และเลือกค่าแรกหรือค่าสุดท้าย
+- `$pull` ใช้เพื่อลบค่าของ field ของ document ที่เป็น array ตามเงื่อนไขที่กำหนด
+- `$push` ใช้เพื่อเพิ่มค่าใหม่ใน array ของ field ของ document
+
+## Aggregation Pipelines
+
+Aggregation Pipelines ใน MongoDB คือการใช้คำสั่งเพื่อโอนย้ายข้อมูล และทำการคำนวณข้อมูล โดยการใช้หลายๆ ขั้นตอน เรียกว่า `stages` โดยแต่ละ `stage` จะทำการโอนย้ายข้อมูล และทำการคำนวณข้อมูล และส่งผลลัพธ์ไปยัง `stage` ถัดๆ ไป
+
+ตัวอย่าง
+
+```bash
+db.posts.aggregate([
+  {
+    $match: { likes: { $gt: 1 } }
+  },
+  {
+    $group: { _id: "$category", totalLikes: { $sum: "$likes" } }
+  }
+])
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[ { _id: 'News', totalLikes: 3 }, { _id: 'Event', totalLikes: 8 } ]
+```
+
+### Aggregation `$group`
+
+ใช้ `$group` เพื่อ group ข้อมูล และทำการคำนวณข้อมูล โดย `_id` expression
+
+อย่าสับสนกับ `_id` ของ document ที่เก็บใน collection ที่เราสร้างขึ้นมา ในการใช้ `$group` ให้ใช้ `_id` expression ที่ต้องการ
+
