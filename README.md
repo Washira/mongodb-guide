@@ -584,6 +584,8 @@ db.posts.deleteMany({ category: "Technology" })
 
 Aggregation Pipelines ใน MongoDB คือการใช้คำสั่งเพื่อโอนย้ายข้อมูล และทำการคำนวณข้อมูล โดยการใช้หลายๆ ขั้นตอน เรียกว่า `stages` โดยแต่ละ `stage` จะทำการโอนย้ายข้อมูล และทำการคำนวณข้อมูล และส่งผลลัพธ์ไปยัง `stage` ถัดๆ ไป
 
+ข้อควรระวังคือ ลำดับของ `stage` เป็นเรื่องสำคัญ แต่ละ `stage` จะทำการ aggregate document ที่ได้จาก `stage` ก่อนหน้าเท่านั้น
+
 ตัวอย่าง
 
 ```bash
@@ -692,6 +694,8 @@ db.movies.aggregate([ { $limit: 1 } ])
 
 ใช้ `$project` เพื่อเลือก field ที่ต้องการ และเปลี่ยนชื่อ field ที่ต้องการ
 
+มันจะคล้ายกับ `projection` ในการ query ข้อมูล แต่ `$project` ใช้ใน aggregation pipelines
+
 ในตัวอย่าง เลือกใช้ database `sample_restaurants` collection `restaurants` และใช้คำสั่ง
 
 ```bash
@@ -771,6 +775,64 @@ db.restaurants.aggregate([
 ]
 ```
 
+field `_id` จะแสดงออกมาเสมอ ถึงแม้ว่าไม่ได้ระบุ
 
+เราสามารถใช้ `1` เพื่อแสดง field ที่ต้องการ และ `0` เพื่อไม่แสดง field ที่ไม่ต้องการ
+
+และข้อจำกัดคือ ไม่สามารถใช้ `1` และ `0` ในการเลือก field ในคราวเดียวกันได้ เหมือนกันกับการ projection ในการ query ข้อมูล
 
 ### Aggregation `$sort`
+
+ใช้ `$sort` เพื่อเรียงลำดับข้อมูล
+
+ในตัวอย่าง เลือกใช้ database `sample_airbnb` collection `listingsAndReviews` และใช้คำสั่ง
+
+```bash
+db.listingsAndReviews.aggregate([ 
+  { 
+    $sort: { "accommodates": -1 } 
+  },
+  {
+    $project: {
+      "name": 1,
+      "accommodates": 1
+    }
+  },
+  {
+    $limit: 5
+  }
+])
+```
+
+เราจะใช้ `1` เพื่อเรียงลำดับข้อมูลจากน้อยไปมาก และ `-1` เพื่อเรียงลำดับข้อมูลจากมากไปน้อย
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  {
+    _id: '19990097',
+    name: 'House close to station & direct to opera house....',
+    accommodates: 16
+  },
+  { _id: '19587001', name: 'Kaena O Kekai', accommodates: 16 },
+  {
+    _id: '20958766',
+    name: 'Great Complex of the Cellars',
+    accommodates: 16
+  },
+  {
+    _id: '12509339',
+    name: 'Barra da Tijuca beach house',
+    accommodates: 16
+  },
+  {
+    _id: '20455499',
+    name: 'DOWNTOWN VIP MONTREAL ,HIGH END DECOR,GOOD VALUE..',
+    accommodates: 16
+  }
+]
+```
+
+จากตัวอย่าง เราจะเห็นว่ามีเพียง 5 document ที่ได้จาก output และเรียงลำดับข้อมูล field `accommodates` จากมากไปน้อย
+
