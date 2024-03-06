@@ -606,3 +606,39 @@ db.posts.aggregate([
 
 อย่าสับสนกับ `_id` ของ document ที่เก็บใน collection ที่เราสร้างขึ้นมา ในการใช้ `$group` ให้ใช้ `_id` expression ที่ต้องการ
 
+ตัวอย่างการใช้ เราจะใช้ dataset จาก [MongoDB Sample Dataset](https://docs.atlas.mongodb.com/sample-data/)
+โดยเลือกใช้ database `sample_airbnb` collection `listingsAndReviews` และใช้คำสั่ง
+  
+```bash
+db.listingsAndReviews.aggregate(
+    [ { $group : { _id : "$property_type" } } ]
+)
+```
+
+จะได้ผลลัพธ์เป็น
+
+```bash
+[
+  { _id: 'Aparthotel' },
+  { _id: 'Apartment' },
+  { _id: 'Barn' },
+  { _id: 'Bed and breakfast' },
+  { _id: 'Boat' },
+  { _id: 'Boutique hotel' },
+  { _id: 'Bungalow' },
+  { _id: 'Cabin' },
+  { _id: 'Camper/RV' },
+  { _id: 'Campsite' },
+  { _id: 'Casa particular (Cuba)' },
+  { _id: 'Castle' },
+  { _id: 'Chalet' },
+  { _id: 'Condominium' },
+  { _id: 'Cottage' },
+  { _id: 'Earth house' },
+  { _id: 'Farm stay' },
+  { _id: 'Guest suite' },
+  { _id: 'Guesthouse' },
+  { _id: 'Heritage hotel (India)' }
+]
+```
+
