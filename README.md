@@ -836,3 +836,5 @@ db.listingsAndReviews.aggregate([
 
 จากตัวอย่าง เราจะเห็นว่ามีเพียง 5 document ที่ได้จาก output และเรียงลำดับข้อมูล field `accommodates` จากมากไปน้อย
 
+
+
